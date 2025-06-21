@@ -1,0 +1,12 @@
+langchain
+langchain-openai
+langchainhub
+langchain-community
+openai
+faiss-cpu
+beautifulsoup4
+pandas
+numpy
+gradio
+tavily-python
+gradio
