@@ -1,0 +1,98 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Pytest
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyCharm / VSCode
+.idea/
+.vscode/
+
+# LangChain specific
+*.db  # Vectorstore sqlite DBs
+*.json  # LangChain schema/config files
+*.yaml
+langchain.log
+output_logs/
+
+# Local dev files
+.env
+.env.*
+*.local
+*.log
+*.tmp
+*.bak
+
+# Model and embedding files
+*.pt
+*.ckpt
+*.pth
+*.h5
+*.tflite
+*.onnx
+
+# FAISS
+index.faiss
+index.pkl
+
+# Temporary or large data files
+data/
+*.csv
+*.tsv
+*.parquet
+*.pkl
+*.npz
+*.npy
+
+# MacOS system files
+.DS_Store
+
+# Docker
+*.pid
+*.pid.lock
+*.sock
