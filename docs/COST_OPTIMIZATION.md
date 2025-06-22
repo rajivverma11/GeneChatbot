@@ -29,5 +29,5 @@ This project uses `get_openai_callback()` to track OpenAI API usage in real time
 Cost per query chart
 ![App Screenshot](cost_per_query_chart.png)
 
-Toens per query chart 
-![App Screenshot](tokens_per_query_chart.png)
+Tokens per query chart 
+![App Screenshot](token_per_query.png)
