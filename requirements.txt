@@ -10,3 +10,4 @@ numpy
 gradio
 tavily-python
 gradio
+tiktoken
