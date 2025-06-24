@@ -10,7 +10,9 @@ from langchain_openai import ChatOpenAI
 from langchain import hub
 
 from src.config import settings
-from src.tools import tools
+from src.tools import search_tavily, amazon_product_search
+
+tools = [search_tavily, amazon_product_search]
 
 # Load ReAct-style prompt
 prompt = hub.pull("hwchase17/react-chat")
@@ -53,15 +55,40 @@ def run_with_memory(query: str, session_id: str = "test-session"):
         config={"configurable": {"session_id": session_id}}
     )
 
-def benchmark_memory_conversation(queries: list[str], session_id: str = "test-session-2") -> list[float]:
-    """Measures time taken per query to evaluate memory benefits."""
+def benchmark_memory_conversation(queries: list[str], session_id: str = "test-session-2"):
+    """Measures time and token cost per query to evaluate memory benefits."""
+    from langchain_community.callbacks import get_openai_callback
+    import pandas as pd
+    import time
+
+    results = []
     times = []
-    for i, query in enumerate(queries):
-        print(f"\nTurn {i+1} | Query: {query}") 
+
+    for query in queries:
         start = time.time()
-        _ = summary_agent_executor.invoke(
-            {"input": query},
-            config={"configurable": {"session_id": session_id}}
-        )
-        times.append(time.time() - start)
-    return times
+        with get_openai_callback() as cb:
+            response = summary_agent_executor.invoke(
+                {"input": query},
+                config={"configurable": {"session_id": session_id}}
+            )
+        duration = time.time() - start
+        times.append(duration)
+
+        results.append({
+            "Query": query,
+            "Response": response,
+            "Total Tokens": cb.total_tokens,
+            "Prompt Tokens": cb.prompt_tokens,
+            "Completion Tokens": cb.completion_tokens,
+            "Total Cost (USD)": cb.total_cost,
+            "Time (sec)": duration
+        })
+
+    df = pd.DataFrame(results)
+    print("\n=== TOKEN/COST SUMMARY ===")
+    print(df[["Prompt Tokens", "Completion Tokens", "Total Tokens", "Total Cost (USD)"]].describe())
+    total_cost = df["Total Cost (USD)"].sum()
+    avg_time = sum(times) / len(times) if times else 0
+
+    return results, df, total_cost, avg_time
+
