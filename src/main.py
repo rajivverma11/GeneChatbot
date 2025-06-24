@@ -1,29 +1,33 @@
-### src/main.py
+# src/main.py
+
+import os
+import argparse
 from src.config import settings
 from src.vector_store import load_vector_store
 from src.agent_executor import create_agent_executor, run_queries_with_cost
 from src.tools import search_tavily, amazon_product_search
+from memory.summary_agent import summary_agent_executor, run_with_memory, benchmark_memory_conversation
 
-from src.config import settings
-import os
 
-# Set env for libraries that read from env
+# Set environment variables
 os.environ["OPENAI_API_KEY"] = settings["OPENAI_API_KEY"]
 os.environ["TAVILY_API_KEY"] = settings["TAVILY_API_KEY"]
 
-# Use models
+# CLI argument parser
+parser = argparse.ArgumentParser()
+parser.add_argument("--mode", choices=["cost", "memory", "benchmark_memory", "run_memory"], default="cost", help="Execution mode")
+args = parser.parse_args()
+
+# Shared values
 model = settings["MODEL_NAME_4O_MINI"]
 embedding_model = settings["MODEL_DEFAULT_EMBEDDING"]
-
-if __name__ == "__main__":
-    # Load retriever from saved FAISS index
-    retriever = load_vector_store("data/faiss_index").as_retriever()
-
-    # Initialize tools
-    tools = [search_tavily, amazon_product_search]
-
-    # Sample queries for agent evaluation
-    queries = [
+tools = [search_tavily, amazon_product_search]
+queries_memory = [
+    "What are the best shoes on Amazon?",
+    "Can you find something under $100?",
+    "Show me a running shoe option."
+]
+queries_cost = [
         "Summarize the history of artificial intelligence",
         "What is the weather in London for next week?",
         "What are the best shoes available in Amazon?",
@@ -35,10 +39,32 @@ if __name__ == "__main__":
         "Give me a detailed summary of wedding dresses that I can buy in Amazon"
     ]
 
-    # Create agent and run queries with cost tracking
-    executor = create_agent_executor(tools)
-    df_results = run_queries_with_cost(executor, queries)
+if __name__ == "__main__":
+    if args.mode == "cost":
+        # 🔁 Batch cost-tracking mode
+        retriever = load_vector_store("data/faiss_index").as_retriever()
+        executor = create_agent_executor(tools)
+        df_results = run_queries_with_cost(executor, queries_cost)
+        df_results.to_csv("examples/agent_cost_analysis_output.csv", index=False)
+        print("Cost and token usage saved to examples/agent_cost_analysis_output.csv")
 
-    # Save results to CSV
-    df_results.to_csv("examples/agent_cost_analysis_output.csv", index=False)
-    print("\nCost and token usage saved to examples/agent_cost_analysis_output.csv")
+    elif args.mode == "memory":
+        # 🧠 Basic memory mode (single multi-turn example)
+        print("\nRunning memory-enabled multi-turn session:\n")
+        for i, query in enumerate(queries_memory):
+            print(f"\nTurn {i+1} | Query: {query}")
+            res = summary_agent_executor.invoke(
+                {"input": query},
+                config={"configurable": {"session_id": "demo-session"}}
+            )
+
+    elif args.mode == "benchmark_memory":
+        # 📊 Run memory benchmark mode
+        print("\nBenchmarking memory-based multi-turn conversation with timing analysis:\n")
+        benchmark_memory_conversation(queries_memory)
+
+    else:
+        # ▶️ Run memory demo function
+        print("\nRunning demo memory session from utility method:\n")
+        run_with_memory(queries_memory[0])
+
