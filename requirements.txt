@@ -1,13 +1,25 @@
-langchain
-langchain-openai
+# LangChain ecosystem
+langchain>=0.1.17
+langchain-openai>=0.1.3
 langchainhub
 langchain-community
-openai
+
+# OpenAI & Tokenization
+openai>=1.14.0
+tiktoken
+
+# Vector store
 faiss-cpu
+
+# Web scraping
 beautifulsoup4
+
+# Data processing
 pandas
 numpy
-gradio
+
+# UI (Gradio for Hugging Face)
+gradio>=4.20.0
+
+# Web search tool
 tavily-python
-gradio
-tiktoken

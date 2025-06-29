@@ -11,6 +11,10 @@ from src.memory.summary_agent import run_with_memory, benchmark_memory_conversat
 os.environ["OPENAI_API_KEY"] = settings["OPENAI_API_KEY"]
 os.environ["TAVILY_API_KEY"] = settings["TAVILY_API_KEY"]
 
+print("DEBUG ENV VAR:", settings["OPENAI_API_KEY"])
+print("DEBUG os.environ:", os.environ.get("OPENAI_API_KEY"))
+
+
 queries_memory = [
     "What are the best shoes on Amazon?",
     "Can you find something under $100?",
@@ -82,7 +86,7 @@ def gradio_ui():
         inputs=gr.Dropdown(["cost", "memory", "benchmark_memory", "run_memory"], label="Select Mode"),
         outputs="text",
         title="GenAI Agent Runner"
-    ).launch()
+    ).launch(server_name="0.0.0.0", server_port=7860,share=True)
 
 def main():
     parser = argparse.ArgumentParser()

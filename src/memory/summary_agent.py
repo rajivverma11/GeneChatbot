@@ -26,10 +26,18 @@ summary_llm = ChatOpenAI(
 )
 
 # Create summarizing memory to reduce token bloat
+
 summary_memory = ConversationSummaryMemory(
     llm=summary_llm,
     memory_key="chat_history"
 )
+
+def get_summary_agent_executor():
+    global summary_agent_executor
+    if summary_agent_executor is None:
+        summary_memory = ConversationSummaryMemory(...)
+        summary_agent_executor = create_agent_executor_with_memory(summary_memory)
+    return summary_agent_executor
 
 # Create ReAct agent with memory support
 summary_react_agent = create_react_agent(
