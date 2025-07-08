@@ -36,9 +36,8 @@ Gene Chatbot uses two key tools in a RAG + ReAct framework:
 * Integrates TavilySearch to fetch real-time web data (e.g., current stock prices, latest research, product trends)
 * Helps overcome the LLM's knowledge cutoff by dynamically retrieving updated information
 
-### Why Use `OpenAI` Instead of `ChatOpenAI`?
+![image](https://github.com/user-attachments/assets/b06c357f-4a0f-401f-bd84-144c106544dc)
 
-We use the `OpenAI` completion API to enable step-by-step control over reasoning and tool invocation in the ReAct agent. Unlike `ChatOpenAI`, it doesn’t handle conversational context implicitly, giving us full control over multi-step execution.
 
 ### Core Components:
 
